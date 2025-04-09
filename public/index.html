@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nintendo Game Store</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">Nintendo Store</div>
+        <div class="nav-links">
+            <button onclick="showLoginForm()">Login</button>
+            <button onclick="showRegisterForm()">Register</button>
+        </div>
+    </nav>
+
+    <div class="platform-filter">
+        <button onclick="filterGames('NES')">NES</button>
+        <button onclick="filterGames('SNES')">SNES</button>
+        <button onclick="filterGames('NDS')">NDS</button>
+        <button onclick="filterGames('Wii')">Wii</button>
+    </div>
+
+    <div id="games-container" class="games-grid"></div>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="login-form">
+                <h2>Login</h2>
+                <input type="text" id="login-username" placeholder="Username">
+                <input type="password" id="login-password" placeholder="Password">
+                <button onclick="login()">Login</button>
+            </div>
+            <div id="register-form" style="display: none;">
+                <h2>Register</h2>
+                <input type="text" id="register-username" placeholder="Username">
+                <input type="email" id="register-email" placeholder="Email">
+                <input type="password" id="register-password" placeholder="Password">
+                <button onclick="register()">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
