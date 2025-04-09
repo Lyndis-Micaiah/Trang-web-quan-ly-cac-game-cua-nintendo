@@ -23,4 +23,24 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Route để lấy game theo platform
+router.get('/', async (req, res) => {
+  const platform = req.query.platform;
+
+  try {
+      let games;
+      if (platform) {
+          // Lọc game theo platform
+          games = await Game.find({ platform: platform });
+      } else {
+          // Lấy tất cả game nếu không có platform
+          games = await Game.find();
+      }
+      res.json(games);
+  } catch (error) {
+      console.error('Error fetching games:', error);
+      res.status(500).json({ message: 'Error fetching games' });
+  }
+});
+
 module.exports = router;

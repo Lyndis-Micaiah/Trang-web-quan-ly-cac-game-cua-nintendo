@@ -1,6 +1,32 @@
+// app.js (Chạy trong client-side, trình duyệt)
+if (typeof document !== 'undefined') {  // Đảm bảo chỉ sử dụng trong trình duyệt
+    let token = localStorage.getItem('token');
+    console.log(token);
 
-let token = localStorage.getItem('token');
+    // Sử dụng document trong trình duyệt để thay đổi DOM
+    document.querySelector('.close').onclick = function() {
+        document.getElementById('auth-modal').style.display = 'none';
+    };
 
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('auth-modal')) {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
+    };
+
+    // Tải games khi trang web tải
+    fetchGames();
+
+    // Thêm sự kiện cho các button filter platform
+    document.querySelectorAll('.platform-filter button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const platform = e.target.textContent;
+            fetchGames(platform);
+        });
+    });
+}
+
+// Các hàm khác không thay đổi
 async function fetchGames(platform = '') {
     const response = await fetch(`/api/games${platform ? `?platform=${platform}` : ''}`);
     const games = await response.json();
@@ -74,16 +100,3 @@ async function register() {
         console.error('Registration error:', error);
     }
 }
-
-document.querySelector('.close').onclick = function() {
-    document.getElementById('auth-modal').style.display = 'none';
-}
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById('auth-modal')) {
-        document.getElementById('auth-modal').style.display = 'none';
-    }
-}
-
-// Load games when page loads
-fetchGames();
