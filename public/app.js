@@ -26,9 +26,16 @@ if (typeof document !== 'undefined') {  // Đảm bảo chỉ sử dụng trong 
     });
 }
 
-// Các hàm khác không thay đổi
 async function fetchGames(platform = '') {
-    const response = await fetch(`/api/games${platform ? `?platform=${platform}` : ''}`);
+    const token = localStorage.getItem('token');
+    
+    const response = await fetch(`/api/games${platform ? `?platform=${platform}` : ''}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    
     const games = await response.json();
     
     const container = document.getElementById('games-container');
@@ -59,7 +66,9 @@ function showRegisterForm() {
     document.getElementById('register-form').style.display = 'block';
 }
 
-async function login() {
+document.getElementById('login-form-id').addEventListener('submit', async function (event) {
+    event.preventDefault();  // Ngừng gửi form mặc định
+
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
 
@@ -71,17 +80,24 @@ async function login() {
         });
 
         const data = await response.json();
+
         if (data.token) {
             localStorage.setItem('token', data.token);
-            token = data.token;
+            localStorage.setItem('username', username);  // Lưu tên người dùng
+            updateUI();
             document.getElementById('auth-modal').style.display = 'none';
+            fetchGames();
+        } else {
+            console.log('Invalid credentials');
         }
     } catch (error) {
         console.error('Login error:', error);
     }
-}
+});
 
-async function register() {
+document.getElementById('register-form-id').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
     const username = document.getElementById('register-username').value;
     const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
@@ -99,4 +115,32 @@ async function register() {
     } catch (error) {
         console.error('Registration error:', error);
     }
+});
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    updateUI();  // Cập nhật lại giao diện
+    fetchGames();  // Lấy lại danh sách game không có token
 }
+
+function updateUI() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    const userInfo = document.getElementById('user-info');
+    const authLinks = document.getElementById('auth-links');
+
+    if (token) {
+        // Hiển thị tên người dùng và nút Logout
+        userInfo.style.display = 'block';
+        authLinks.style.display = 'none';
+        document.getElementById('username-display').textContent = `Hello, ${username}`;
+    } else {
+        // Hiển thị các nút Login và Register
+        userInfo.style.display = 'none';
+        authLinks.style.display = 'flex';
+    }
+}
+
+// Gọi hàm updateUI khi trang tải
+updateUI();

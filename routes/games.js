@@ -1,6 +1,7 @@
 
 const router = require('express').Router();
 const Game = require('../models/Game');
+const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/', async (req, res) => {
   try {
@@ -23,17 +24,15 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Route để lấy game theo platform
-router.get('/', async (req, res) => {
+// Route bảo vệ yêu cầu JWT
+router.get('/', authMiddleware, async (req, res) => {
   const platform = req.query.platform;
 
   try {
       let games;
       if (platform) {
-          // Lọc game theo platform
           games = await Game.find({ platform: platform });
       } else {
-          // Lấy tất cả game nếu không có platform
           games = await Game.find();
       }
       res.json(games);
